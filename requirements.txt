@@ -1,0 +1,7 @@
+python-jose[cryptography] #to authorize the login tokens and give access 
+passlib[bcrypt] #hash the user entered password and store in DB 
+python-multipart #allows to send other than text data to API 
+fastapi #backend framework to handle APIs
+uvicorn #engine to run server
+sqlalchemy #connects python to database 
+#secret key = k8d93!xQ@pL0mZ9#vR2tY7uI1oP5sA8d

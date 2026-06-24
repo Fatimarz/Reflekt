@@ -11,6 +11,7 @@ import { useState, useEffect, useRef } from "react";
    Subtle:    #9B92B8  muted lavender
 ═══════════════════════════════════════════════════ */
 
+const API = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 const T = {
   primary:    "#7C5CBF",
   primaryDark:"#5E3F9E",
@@ -47,7 +48,7 @@ function AuthPage({ onLogin }) {
   const handleDemoLogin = async () => {
     setDemoLoading(true); setError("");
     try {
-      const res  = await fetch("http://127.0.0.1:8000/auth/demo-login", { method: "POST" });
+      const res  = await fetch("${API}/auth/demo-login", { method: "POST" });
       const data = await res.json();
       if (data.access_token) {
         onLogin(data.access_token, "demo_user");
@@ -68,7 +69,7 @@ function AuthPage({ onLogin }) {
       const formData = new URLSearchParams();
       formData.append("username", username);
       formData.append("password", password);
-      const res  = await fetch("http://127.0.0.1:8000/auth/token", { method: "POST", body: formData });
+      const res  = await fetch("${API}/auth/token", { method: "POST", body: formData });
       const data = await res.json();
       if (data.access_token) {
         onLogin(data.access_token, username);
@@ -91,7 +92,7 @@ function AuthPage({ onLogin }) {
       const body = { username, password };
       if (email.trim()) body.email = email.trim(); // email is optional
 
-      const res  = await fetch("http://127.0.0.1:8000/auth/register", {
+      const res  = await fetch("${API}/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
@@ -101,7 +102,7 @@ function AuthPage({ onLogin }) {
         const formData = new URLSearchParams();
         formData.append("username", username);
         formData.append("password", password);
-        const loginRes  = await fetch("http://127.0.0.1:8000/auth/token", { method: "POST", body: formData });
+        const loginRes  = await fetch("${API}/auth/token", { method: "POST", body: formData });
         const loginData = await loginRes.json();
         if (loginData.access_token) {
           onLogin(loginData.access_token, username);
@@ -228,7 +229,7 @@ function InsightCard({ token }) {
   useEffect(() => {
     const fetchInsight = async () => {
       try {
-        const res  = await fetch("http://127.0.0.1:8000/journal/insight", {
+        const res  = await fetch("${API}/journal/insight", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -278,7 +279,7 @@ function InsightsDashboard({ token }) {
   useEffect(() => {
     const fetch_ = async () => {
       try {
-        const res  = await fetch("http://127.0.0.1:8000/journal/insights-dashboard", {
+        const res  = await fetch("${API}/journal/insights-dashboard", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const json = await res.json();
@@ -387,14 +388,14 @@ function PastSelfChat({ token }) {
 
   const embedJournals = async () => {
     setEmbedding(true);
-    try { await fetch("http://127.0.0.1:8000/journal/embed-journals", { method: "POST", headers: { Authorization: `Bearer ${token}` } }); }
+    try { await fetch("${API}/journal/embed-journals", { method: "POST", headers: { Authorization: `Bearer ${token}` } }); }
     catch {}
     finally { setEmbedding(false); }
   };
 
   const fetchSessions = async () => {
     try {
-      const res  = await fetch("http://127.0.0.1:8000/journal/chat/sessions", { headers: { Authorization: `Bearer ${token}` } });
+      const res  = await fetch("${API}/journal/chat/sessions", { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
       setSessions(Array.isArray(data) ? data : []);
     } catch {}
@@ -402,7 +403,7 @@ function PastSelfChat({ token }) {
 
   const loadSession = async (id) => {
     try {
-      const res  = await fetch(`http://127.0.0.1:8000/journal/chat/sessions/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+      const res  = await fetch(`${API}/journal/chat/sessions/${id}`, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
       setMessages(data.messages || []);
       setSessionId(id);
@@ -422,7 +423,7 @@ function PastSelfChat({ token }) {
     setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/journal/chat", {
+      const res = await fetch("${API}/journal/chat", {
         method:  "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body:    JSON.stringify({ message: msg, session_id: sessionId }),
@@ -471,7 +472,7 @@ function PastSelfChat({ token }) {
   const deleteSession = async (id, e) => {
     e.stopPropagation(); // don't trigger loadSession
     try {
-      await fetch(`http://127.0.0.1:8000/journal/chat/sessions/${id}`, {
+      await fetch(`${API}/journal/chat/sessions/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -488,7 +489,7 @@ function PastSelfChat({ token }) {
     const formData = new FormData();
     formData.append("file", file);
     try {
-      const res  = await fetch("http://127.0.0.1:8000/journal/import", { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: formData });
+      const res  = await fetch("${API}/journal/import", { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: formData });
       const data = await res.json();
       setImportMsg(data.message || data.error || "Done");
     } catch { setImportMsg("Import failed. Try again."); }
@@ -593,7 +594,7 @@ function Dashboard({ token, username, onLogout }) {
 
   const fetchJournals = async () => {
     try {
-      const res  = await fetch("http://127.0.0.1:8000/journal/", { headers: { Authorization: `Bearer ${token}` } });
+      const res  = await fetch("${API}/journal/", { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
       setJournals(Array.isArray(data) ? data : []);
     } catch (err) { console.log("fetch error:", err); }
@@ -603,7 +604,7 @@ function Dashboard({ token, username, onLogout }) {
   const addJournal = async () => {
     if (!content.trim()) return;
     try {
-      const res  = await fetch("http://127.0.0.1:8000/journal/", {
+      const res  = await fetch("${API}/journal/", {
         method:  "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body:    JSON.stringify({ content }),
@@ -615,14 +616,14 @@ function Dashboard({ token, username, onLogout }) {
   };
 
   const deleteJournal = async (id) => {
-    await fetch(`http://127.0.0.1:8000/journal/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+    await fetch(`${API}/journal/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
     setJournals(prev => prev.filter(j => j.id !== id));
   };
 
   const editJournal = async (id) => {
     if (!editContent.trim()) return;
     try {
-      const res  = await fetch(`http://127.0.0.1:8000/journal/${id}`, {
+      const res  = await fetch(`${API}/journal/${id}`, {
         method:  "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body:    JSON.stringify({ content: editContent }),

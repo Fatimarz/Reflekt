@@ -48,7 +48,7 @@ function AuthPage({ onLogin }) {
   const handleDemoLogin = async () => {
     setDemoLoading(true); setError("");
     try {
-      const res  = await fetch("${API}/auth/demo-login", { method: "POST" });
+      const res  = await fetch(`${API}/auth/demo-login`, { method: "POST" });
       const data = await res.json();
       if (data.access_token) {
         onLogin(data.access_token, "demo_user");
@@ -69,7 +69,7 @@ function AuthPage({ onLogin }) {
       const formData = new URLSearchParams();
       formData.append("username", username);
       formData.append("password", password);
-      const res  = await fetch("${API}/auth/token", { method: "POST", body: formData });
+      const res  = await fetch(`${API}/auth/token`, { method: "POST", body: formData });
       const data = await res.json();
       if (data.access_token) {
         onLogin(data.access_token, username);
@@ -92,7 +92,7 @@ function AuthPage({ onLogin }) {
       const body = { username, password };
       if (email.trim()) body.email = email.trim(); // email is optional
 
-      const res  = await fetch("${API}/auth/register", {
+      const res  = await fetch(`${API}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
@@ -102,7 +102,7 @@ function AuthPage({ onLogin }) {
         const formData = new URLSearchParams();
         formData.append("username", username);
         formData.append("password", password);
-        const loginRes  = await fetch("${API}/auth/token", { method: "POST", body: formData });
+        const loginRes  = await fetch(`${API}/auth/token`, { method: "POST", body: formData });
         const loginData = await loginRes.json();
         if (loginData.access_token) {
           onLogin(loginData.access_token, username);
@@ -229,7 +229,7 @@ function InsightCard({ token }) {
   useEffect(() => {
     const fetchInsight = async () => {
       try {
-        const res  = await fetch("${API}/journal/insight", {
+        const res  = await fetch(`${API}/journal/insight`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -279,7 +279,7 @@ function InsightsDashboard({ token }) {
   useEffect(() => {
     const fetch_ = async () => {
       try {
-        const res  = await fetch("${API}/journal/insights-dashboard", {
+        const res  = await fetch(`${API}/journal/insights-dashboard`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const json = await res.json();
@@ -388,14 +388,14 @@ function PastSelfChat({ token }) {
 
   const embedJournals = async () => {
     setEmbedding(true);
-    try { await fetch("${API}/journal/embed-journals", { method: "POST", headers: { Authorization: `Bearer ${token}` } }); }
+    try { await fetch(`${API}/journal/embed-journals`, { method: "POST", headers: { Authorization: `Bearer ${token}` } }); }
     catch {}
     finally { setEmbedding(false); }
   };
 
   const fetchSessions = async () => {
     try {
-      const res  = await fetch("${API}/journal/chat/sessions", { headers: { Authorization: `Bearer ${token}` } });
+      const res  = await fetch(`${API}/journal/chat/sessions`, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
       setSessions(Array.isArray(data) ? data : []);
     } catch {}
@@ -423,7 +423,7 @@ function PastSelfChat({ token }) {
     setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
 
     try {
-      const res = await fetch("${API}/journal/chat", {
+      const res = await fetch(`${API}/journal/chat`, {
         method:  "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body:    JSON.stringify({ message: msg, session_id: sessionId }),
@@ -489,7 +489,7 @@ function PastSelfChat({ token }) {
     const formData = new FormData();
     formData.append("file", file);
     try {
-      const res  = await fetch("${API}/journal/import", { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: formData });
+      const res  = await fetch(`${API}/journal/import`, { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: formData });
       const data = await res.json();
       setImportMsg(data.message || data.error || "Done");
     } catch { setImportMsg("Import failed. Try again."); }
@@ -594,7 +594,7 @@ function Dashboard({ token, username, onLogout }) {
 
   const fetchJournals = async () => {
     try {
-      const res  = await fetch("${API}/journal/", { headers: { Authorization: `Bearer ${token}` } });
+      const res  = await fetch(`${API}/journal/`, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
       setJournals(Array.isArray(data) ? data : []);
     } catch (err) { console.log("fetch error:", err); }
@@ -604,7 +604,7 @@ function Dashboard({ token, username, onLogout }) {
   const addJournal = async () => {
     if (!content.trim()) return;
     try {
-      const res  = await fetch("${API}/journal/", {
+      const res  = await fetch(`${API}/journal/`, {
         method:  "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body:    JSON.stringify({ content }),
